@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/22/cleanarchitecture/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/22/CleanArchitecture/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/22/cleanarchitecture/" class="post-title-link" itemprop="url">使用 Clean Architecture 開發 WebAPI</a>
+            <a href="/2020/10/22/CleanArchitecture/" class="post-title-link" itemprop="url">使用 Clean Architecture 開發 WebAPI</a>
         </h2>
 
         <div class="post-meta">
@@ -168,10 +168,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">發表於</span>
-              
 
-              <time title="創建時間：2020-10-22 01:49:03 / 修改時間：01:55:34" itemprop="dateCreated datePublished" datetime="2020-10-22T01:49:03+08:00">2020-10-22</time>
+              <time title="創建時間：2020-10-22 01:49:03" itemprop="dateCreated datePublished" datetime="2020-10-22T01:49:03+08:00">2020-10-22</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新於</span>
+                <time title="修改時間：2020-10-24 03:44:41" itemprop="dateModified" datetime="2020-10-24T03:44:41+08:00">2020-10-24</time>
+              </span>
 
           
 
@@ -184,7 +190,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <p><img src="1603474266366.jpg" alt="建立新專案"><br><img src="1603474777374.jpg" alt="設定新專案"><br><img src="1603474906746.jpg" alt="建立新的ASP.NET Core Web 應用程式"></p>
+<h3 id="launchSetting-json-File-設定"><a href="#launchSetting-json-File-設定" class="headerlink" title="launchSetting.json File 設定"></a><code>launchSetting.json File 設定</code></h3><p>將 launchBrowser 設為 false ,程式啟動時不必啟用瀏覽器</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;$schema&quot;</span>: <span class="string">&quot;http://json.schemastore.org/launchsettings.json&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;iisSettings&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;windowsAuthentication&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">&quot;anonymousAuthentication&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;iisExpress&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;applicationUrl&quot;</span>: <span class="string">&quot;http://localhost:63642&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;sslPort&quot;</span>: <span class="number">44341</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;profiles&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;IIS Express&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;commandName&quot;</span>: <span class="string">&quot;IISExpress&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;launchBrowser&quot;</span>: <span class="literal">false</span>,  <span class="comment">/// &lt;--- 改成 fasle</span></span><br><span class="line">      <span class="attr">&quot;launchUrl&quot;</span>: <span class="string">&quot;weatherforecast&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;environmentVariables&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;ASPNETCORE_ENVIRONMENT&quot;</span>: <span class="string">&quot;Development&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;DrawWebAPI&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;commandName&quot;</span>: <span class="string">&quot;Project&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;launchBrowser&quot;</span>: <span class="literal">false</span>,  <span class="comment">/// &lt;--- 改成 fasle</span></span><br><span class="line">      <span class="attr">&quot;launchUrl&quot;</span>: <span class="string">&quot;weatherforecast&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;applicationUrl&quot;</span>: <span class="string">&quot;https://localhost:5001;http://localhost:5000&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;environmentVariables&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;ASPNETCORE_ENVIRONMENT&quot;</span>: <span class="string">&quot;Development&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由於較大的應用程序可能包含許多不同的內容服務，我們最終會在代碼中產生很多混亂且無法讀取的代碼ConfigureServices方法。 為了使下一個更具可讀性個人和我們自己，我們可以將代碼組織成邏輯塊並將這些塊分成擴展方法。</p>
+<h2 id="CORS-設定"><a href="#CORS-設定" class="headerlink" title="CORS 設定"></a>CORS 設定</h2>
       
     </div>
 
