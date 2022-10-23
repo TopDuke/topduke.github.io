@@ -176,7 +176,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2022-10-23 06:29:52" itemprop="dateModified" datetime="2022-10-23T06:29:52+08:00">2022-10-23</time>
+                <time title="修改時間：2022-10-23 11:12:02" itemprop="dateModified" datetime="2022-10-23T11:12:02+08:00">2022-10-23</time>
               </span>
 
           
@@ -321,114 +321,67 @@
 <p>need to fix that in EdService </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">internal sealed class EdService : IEdService</span><br><span class="line">&#123;</span><br><span class="line">    private readonly IRepositoryManager _repository;</span><br><span class="line">    private readonly ILoggerManager _logger;</span><br><span class="line">    private readonly IMapper _mapper;</span><br><span class="line"></span><br><span class="line">    public EdService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)</span><br><span class="line">    &#123;</span><br><span class="line">        _repository &#x3D; repository;</span><br><span class="line">        _logger &#x3D; logger;</span><br><span class="line">        _mapper &#x3D; mapper;   </span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Finally, we can modify the GetAllEd method in the EdService class:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#96;&#96;&#96;</span><br><span class="line">## Global Error Handling</span><br><span class="line">##### Handling Errors Globally with the Built-In Middleware</span><br><span class="line">We are going to create a new ErrorModel folder in the Entities project, and add the new class ErrorDetails in that folder:</span><br></pre></td></tr></table></figure>
-<p>public class ErrorDetails<br>{<br>    public int StatusCode { get; set; }<br>    public string? Message { get; set; }<br>    public override string ToString() =&gt; JsonSerializer.Serialize(this);<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;我們將使用此類來獲取錯誤消息的詳細信息。</span><br><span class="line"></span><br><span class="line">in the Extensions folder in the main project, we are going to add a new static class: ExceptionMiddlewareExtensions.cs</span><br></pre></td></tr></table></figure>
-<p>public static class ExceptionMiddlewareExtensions<br>{<br>    public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager logger)<br>    {<br>        app.UseExceptionHandler(appError =&gt;<br>            {<br>                appError.Run(async context =&gt;<br>                {<br>                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;<br>                    context.Response.ContentType = “application/json”;</p>
-<pre><code>                var contextFeature = context.Features.Get&lt;IExceptionHandlerFeature&gt;();
+<h2 id="Global-Error-Handling"><a href="#Global-Error-Handling" class="headerlink" title="Global Error Handling"></a>Global Error Handling</h2><h5 id="Handling-Errors-Globally-with-the-Built-In-Middleware"><a href="#Handling-Errors-Globally-with-the-Built-In-Middleware" class="headerlink" title="Handling Errors Globally with the Built-In Middleware"></a>Handling Errors Globally with the Built-In Middleware</h5><p>We are going to create a new ErrorModel folder in the Entities project, and add the new class ErrorDetails in that folder:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class ErrorDetails</span><br><span class="line">&#123;</span><br><span class="line">    public int StatusCode &#123; get; set; &#125;</span><br><span class="line">    public string? Message &#123; get; set; &#125;</span><br><span class="line">    public override string ToString() &#x3D;&gt; JsonSerializer.Serialize(this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>我們將使用此類來獲取錯誤消息的詳細信息。</p>
+</blockquote>
+<p>in the Extensions folder in the main project, we are going to add a new static class: ExceptionMiddlewareExtensions.cs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public static class ExceptionMiddlewareExtensions</span><br><span class="line">&#123;</span><br><span class="line">    public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager logger)</span><br><span class="line">    &#123;</span><br><span class="line">        app.UseExceptionHandler(appError &#x3D;&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                appError.Run(async context &#x3D;&gt;</span><br><span class="line">                &#123;</span><br><span class="line">                    context.Response.StatusCode &#x3D; (int)HttpStatusCode.InternalServerError;</span><br><span class="line">                    context.Response.ContentType &#x3D; &quot;application&#x2F;json&quot;;</span><br><span class="line"></span><br><span class="line">                    var contextFeature &#x3D; context.Features.Get&lt;IExceptionHandlerFeature&gt;();</span><br><span class="line">                    if (contextFeature !&#x3D; null)</span><br><span class="line">                    &#123;</span><br><span class="line">                        logger.LogError($&quot;Something went wrong: &#123;contextFeature.Error&#125;&quot;);</span><br><span class="line"></span><br><span class="line">                        await context.Response.WriteAsync(new ErrorDetails()</span><br><span class="line">                        &#123;</span><br><span class="line">                            StatusCode &#x3D; context.Response.StatusCode,</span><br><span class="line">                            Message &#x3D; &quot;Internal Server Error.&quot;</span><br><span class="line">                        &#125;.ToString());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>To be able to use this extension method, let’s modify the Program class</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var app &#x3D; builder.Build();</span><br><span class="line"></span><br><span class="line">var logger &#x3D; app.Services.GetRequiredService&lt;ILoggerManager&gt;();</span><br><span class="line">app.ConfigureExceptionHandler(logger);  </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Configure the HTTP request pipeline.</span><br><span class="line"></span><br><span class="line">if (app.Environment.IsDevelopment())</span><br><span class="line">    app.UseDeveloperExceptionPage();</span><br><span class="line">else</span><br><span class="line">    app.UseHsts();</span><br></pre></td></tr></table></figure>
+<p>Finally, let’s remove the try-catch block from the GetAllEd service method:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public IEnumerable&lt;EdDto&gt; GetAllEd(bool trackChanges)</span><br><span class="line"> &#123;</span><br><span class="line">     var ed &#x3D; _repository.Ed.GetAllEd(trackChanges);</span><br><span class="line">     var edDto &#x3D; _mapper.Map&lt;IEnumerable&lt;EdDto&gt;&gt;(ed);</span><br><span class="line">     return edDto;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>And from our GetCompanies action: EdController</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[HttpGet]</span><br><span class="line">public IActionResult GetEd()</span><br><span class="line">&#123;</span><br><span class="line">	var ed &#x3D; _service.EdService.GetAllEd(trackChanges: false);</span><br><span class="line">	return Ok(ed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Getting-Additional-Resource"><a href="#Getting-Additional-Resource" class="headerlink" title="Getting Additional Resource"></a>Getting Additional Resource</h2><h5 id="Getting-a-Single-Resource-From-the-Database"><a href="#Getting-a-Single-Resource-From-the-Database" class="headerlink" title="Getting a Single Resource From the Database"></a>Getting a Single Resource From the Database</h5><p>Let’s start by modifying the IEdRepository interface:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface IEdRepository</span><br><span class="line">&#123;</span><br><span class="line">    IEnumerable&lt;Ed&gt; GetAllEd(bool trackChanges);</span><br><span class="line">    Ed GetByDrawDate(DateTime Drawdate, bool trackChanges);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>we are going to implement this interface in the EdRepository.cs file:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public Ed GetByDrawDate(DateTime Drawdate, bool trackChanges) &#x3D;&gt;</span><br><span class="line">	FindByCondition(c &#x3D;&gt; c.DrawDate.Equals(Drawdate), trackChanges)</span><br><span class="line">	.SingleOrDefault();</span><br></pre></td></tr></table></figure>
+<p>Then, we have to modify the IEdService interface:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface IEdService</span><br><span class="line">&#123;</span><br><span class="line">    IEnumerable&lt;EdDto&gt; GetAllEd(bool trackChanges);</span><br><span class="line">    EdDto GetEd(DateTime Drawdate, bool trackChanges);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>we have to implement this interface in the EdService class:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public EdDto GetEd(DateTime Drawdate, bool trackChanges)</span><br><span class="line">&#123;</span><br><span class="line">    var ed &#x3D; _repository.Ed.GetByDrawDate(Drawdate, trackChanges);</span><br><span class="line"></span><br><span class="line">    var edDto &#x3D; _mapper.Map&lt;EdDto&gt;(ed);</span><br><span class="line">    return edDto;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Finally, let’s change the EdController class:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[HttpGet(&quot;&#123;drawdate:datetime&#125;&quot;)]</span><br><span class="line">public IActionResult GetEd(DateTime drawdate)</span><br><span class="line">&#123;</span><br><span class="line">	var ed &#x3D; _service.EdService.GetEd(drawdate, trackChanges: false);</span><br><span class="line">	return Ok(ed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Great. This works as expected. But, what if someone uses an invalid drawdate parameter?</p>
+<h5 id="Handling-Invalid-Requests-in-a-Service-Layer"><a href="#Handling-Invalid-Requests-in-a-Service-Layer" class="headerlink" title="Handling Invalid Requests in a Service Layer"></a>Handling Invalid Requests in a Service Layer</h5><p>start with a new Exceptions folder creation inside the Entities project. Since,<br>in this case, we are going to create a not found response, let’s create a new NotFoundException class inside that folder</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public abstract class NotFoundException : Exception</span><br><span class="line">&#123;</span><br><span class="line">    protected NotFoundException(string message) : base(message)</span><br><span class="line">    &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>we are going to create a new EdDateNotFoundException class in the same Exceptions folder:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public sealed class EdDateNotFoundException : NotFoundException</span><br><span class="line">&#123;</span><br><span class="line">	public EdDateNotFoundException(DateTime drawdate)</span><br><span class="line">		: base($&quot;沒發現到 &#123;drawdate&#125; 這天的開獎日期&quot;)</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Right after that, we can remove the comment in the GetEd method and throw this exception:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public EdDto GetEd(DateTime Drawdate, bool trackChanges)</span><br><span class="line">&#123;</span><br><span class="line">    var ed &#x3D; _repository.Ed.GetByDrawDate(Drawdate, trackChanges);</span><br><span class="line">    if (ed is null)</span><br><span class="line">        throw new EdDateNotFoundException(Drawdate);</span><br><span class="line"></span><br><span class="line">    var edDto &#x3D; _mapper.Map&lt;EdDto&gt;(ed);</span><br><span class="line">    return edDto;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Finally, we have to modify our error middleware because we don’t want to return the 500 error message to our clients for every custom error we throw from the service layer.<br>So, let’s modify the ExceptionMiddlewareExtensions class in the main project:</p>
+<pre><code>    public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager logger)
+    &#123;
+        app.UseExceptionHandler(appError =&gt;
+        &#123;
+            appError.Run(async context =&gt;
+            &#123;
+                context.Response.ContentType = &quot;application/json&quot;;
+                var contextFeature = context.Features.Get&lt;IExceptionHandlerFeature&gt;();
                 if (contextFeature != null)
                 &#123;
+                    context.Response.StatusCode = contextFeature.Error switch
+                    &#123;
+                        NotFoundException =&gt; StatusCodes.Status404NotFound,
+                        _ =&gt; StatusCodes.Status500InternalServerError
+                    &#125;;
+
                     logger.LogError($&quot;Something went wrong: &#123;contextFeature.Error&#125;&quot;);
 
                     await context.Response.WriteAsync(new ErrorDetails()
                     &#123;
                         StatusCode = context.Response.StatusCode,
-                        Message = &quot;Internal Server Error.&quot;
+                        Message = contextFeature.Error.Message
                     &#125;.ToString());
                 &#125;
             &#125;);
-        &#125;
-    );
-&#125;</code></pre>
-<p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">To be able to use this extension method, let’s modify the Program class</span><br></pre></td></tr></table></figure>
-<p>var app = builder.Build();</p>
-<p>var logger = app.Services.GetRequiredService<ILoggerManager>();<br>app.ConfigureExceptionHandler(logger);  </p>
-<p>// Configure the HTTP request pipeline.</p>
-<p>if (app.Environment.IsDevelopment())<br>    app.UseDeveloperExceptionPage();<br>else<br>    app.UseHsts();</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Finally, let’s remove the try-catch block from the GetAllEd service method:</span><br></pre></td></tr></table></figure>
-<p>   public IEnumerable<EdDto> GetAllEd(bool trackChanges)<br>    {<br>        var ed = _repository.Ed.GetAllEd(trackChanges);<br>        var edDto = _mapper.Map&lt;IEnumerable<EdDto>&gt;(ed);<br>        return edDto;<br>    }</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">And from our GetCompanies action: EdController</span><br></pre></td></tr></table></figure>
-<pre><code>[HttpGet]
-public IActionResult GetEd()
-&#123;
-    var ed = _service.EdService.GetAllEd(trackChanges: false);
-    return Ok(ed);
-&#125;</code></pre>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">## Getting Additional Resource</span><br><span class="line">##### Getting a Single Resource From the Database</span><br><span class="line">Let’s start by modifying the IEdRepository interface:</span><br></pre></td></tr></table></figure>
-<p>public interface IEdRepository<br>{<br>    IEnumerable<Ed> GetAllEd(bool trackChanges);<br>    Ed GetByDrawDate(DateTime Drawdate, bool trackChanges);<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">we are going to implement this interface in the EdRepository.cs file:</span><br></pre></td></tr></table></figure>
-<pre><code>public Ed GetByDrawDate(DateTime Drawdate, bool trackChanges) =&gt;
-    FindByCondition(c =&gt; c.DrawDate.Equals(Drawdate), trackChanges)
-    .SingleOrDefault();</code></pre>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Then, we have to modify the IEdService interface:</span><br></pre></td></tr></table></figure>
-<p>public interface IEdService<br>{<br>    IEnumerable<EdDto> GetAllEd(bool trackChanges);<br>    EdDto GetEd(DateTime Drawdate, bool trackChanges);<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">we have to implement this interface in the EdService class:</span><br></pre></td></tr></table></figure>
-<p>public EdDto GetEd(DateTime Drawdate, bool trackChanges)<br>{<br>    var ed = _repository.Ed.GetByDrawDate(Drawdate, trackChanges);</p>
-<pre><code>var edDto = _mapper.Map&lt;EdDto&gt;(ed);
-return edDto;</code></pre>
-<p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Finally, let’s change the EdController class:</span><br></pre></td></tr></table></figure>
-<pre><code>[HttpGet(&quot;&#123;drawdate:datetime&#125;&quot;)]
-public IActionResult GetEd(DateTime drawdate)
-&#123;
-    var ed = _service.EdService.GetEd(drawdate, trackChanges: false);
-    return Ok(ed);
-&#125;</code></pre>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Great. This works as expected. But, what if someone uses an invalid drawdate parameter?</span><br><span class="line">##### Handling Invalid Requests in a Service Layer</span><br><span class="line">start with a new Exceptions folder creation inside the Entities project. Since,</span><br><span class="line">in this case, we are going to create a not found response, let’s create a new NotFoundException class inside that folder</span><br></pre></td></tr></table></figure>
-<p>public abstract class NotFoundException : Exception<br>{<br>    protected NotFoundException(string message) : base(message)<br>    { }<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">we are going to create a new EdDateNotFoundException class in the same Exceptions folder:</span><br></pre></td></tr></table></figure>
-<p>public sealed class EdDateNotFoundException : NotFoundException<br>{<br>    public EdDateNotFoundException(DateTime drawdate)<br>        : base($”沒發現到 {drawdate} 這天的開獎日期”)<br>    {<br>    }<br>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Right after that, we can remove the comment in the GetEd method and throw this exception:</span><br></pre></td></tr></table></figure>
-<pre><code>public EdDto GetEd(DateTime Drawdate, bool trackChanges)
-&#123;
-    var ed = _repository.Ed.GetByDrawDate(Drawdate, trackChanges);
-    if (ed is null)
-        throw new EdDateNotFoundException(Drawdate);
-
-    var edDto = _mapper.Map&lt;EdDto&gt;(ed);
-    return edDto;
-&#125;</code></pre>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Finally, we have to modify our error middleware because we don’t want to return the 500 error message to our clients for every custom error we throw from the service layer.</span><br><span class="line">So, let’s modify the ExceptionMiddlewareExtensions class in the main project:</span><br></pre></td></tr></table></figure>
-<pre><code>public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager logger)
-&#123;
-    app.UseExceptionHandler(appError =&gt;
-    &#123;
-        appError.Run(async context =&gt;
-        &#123;
-            context.Response.ContentType = &quot;application/json&quot;;
-            var contextFeature = context.Features.Get&lt;IExceptionHandlerFeature&gt;();
-            if (contextFeature != null)
-            &#123;
-                context.Response.StatusCode = contextFeature.Error switch
-                &#123;
-                    NotFoundException =&gt; StatusCodes.Status404NotFound,
-                    _ =&gt; StatusCodes.Status500InternalServerError
-                &#125;;
-
-                logger.LogError($&quot;Something went wrong: &#123;contextFeature.Error&#125;&quot;);
-
-                await context.Response.WriteAsync(new ErrorDetails()
-                &#123;
-                    StatusCode = context.Response.StatusCode,
-                    Message = contextFeature.Error.Message
-                &#125;.ToString());
-            &#125;
         &#125;);
-    &#125;);
-&#125;</code></pre>
-<pre><code>we will handle more exceptional cases in the rest of the project. 
-
-
-
-# 從這裡開始編修 第3章
-##### AutoMapper Configuration
-##### Auto Mapper
-##### Swagger
-
-
+    &#125;
 </code></pre>
-
+<p>we will handle more exceptional cases in the rest of the project. </p>
+<h1 id="從這裡開始編修-第3章"><a href="#從這裡開始編修-第3章" class="headerlink" title="從這裡開始編修 第3章"></a>從這裡開始編修 第3章</h1><h5 id="AutoMapper-Configuration"><a href="#AutoMapper-Configuration" class="headerlink" title="AutoMapper Configuration"></a>AutoMapper Configuration</h5><h5 id="Auto-Mapper"><a href="#Auto-Mapper" class="headerlink" title="Auto Mapper"></a>Auto Mapper</h5><h5 id="Swagger"><a href="#Swagger" class="headerlink" title="Swagger"></a>Swagger</h5>
       
     </div>
 
